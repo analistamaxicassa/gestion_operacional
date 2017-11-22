@@ -115,6 +115,7 @@
 										//consulta de concepto de sala
 										$sql_resumen = "SELECT DISTINCT(salas.nombre), cs.fecha FROM concepto_sala AS cs INNER JOIN salas ON cs.cc = salas.cc
 										WHERE (DATE(cs.fecha) BETWEEN '$fecha' AND '$fechaActual') ORDER BY cs.fecha DESC";
+										//echo $sql_resumen."<br>";
 										$query_resumen=$link_personal->query($sql_resumen);
 										$resumen=$query_resumen->fetch_object();  ///consultar
 

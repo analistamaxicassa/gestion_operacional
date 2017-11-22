@@ -27,23 +27,6 @@
 	$rs_qrya=$qry_sqla->fetch_object();  ///consultar
 
 	$rs_qrya->email;
-
-	//consulta de concepto de sala
-	$sql2="SELECT sa.nombre nombre, fecha, avg(calificacion)  promedio  , autor FROM concepto_sala cs inner join salas sa on cs.cc = sa.cc WHERE cs.cc = '$sala' and fecha = '$hoy'";
-	$qry_sql2=$link->query($sql2);
-	$rs_qry2=$qry_sql2->fetch_object();  ///consultar
-
-	if (empty($rs_qry2)) {
-    echo 'No existen registros';
-	exit();
-	}
-	else
-	{
-		$rs_qry2->nombre;
-		$rs_qry2->fecha;
-		$rs_qry2->promedio;
-		$rs_qry2->autor;
-	}
 if(true)
 {
 	require_once '../vendor/autoload.php';
@@ -71,19 +54,18 @@ if(true)
 	$impautor='<br><b>AUTOR: </b>';
 	$espacio=' : ';
 
-	$body= $cuerpo.$impfecha.$hoy.$impsala.$rs_qrya->nombre.$impconcepto.$concepto_det.$espacio.$tarea.$impautor.$autor;
+	$body= $cuerpo.$impfecha.$fechaActual.$impsala.$rs_qrya->nombre.$impconcepto.$concepto_det.$espacio.$tarea.$impautor.$autor;
 
 	// Create a message
 	$message = (new Swift_Message($asunto))
 	->setFrom(['ares@ceramigres.com' => 'Plataforma del Grupo Empresarial Maxicassa'])
 	->setTo([$responsable => 'Sala'])
-	->setBody($body)
+	->setBody($body, 'text/html')
 	;
 
 	// Send the message
 	$result = $mailer->send($message);
-	$Location = "Location: selecciona_sala.php";
-	header($Location);
+	header("Location: selecciona_sala.php");
 }
 
 ?>

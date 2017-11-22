@@ -290,7 +290,7 @@ do{
                                 <option value="juridico@ceramigres.com">JURIDICO</option>
                                 <option value="jmercadeo@ceramigres.com">MERCADEO</option>
                                 <option value="merchandising@ceramigres.com">MERCHANDISING</option>
-                                <option value="druiz@ceramigres.com">SISTEMAS Y TECNOLOGIA</option>
+                                <option value="desarrollador@ceramigres.com">SISTEMAS Y TECNOLOGIA</option>
                                 <option value="tesoreria@ceramigres.com">TESORERIA</option>
                                 <option value="lrodriguez@ceramigres.com">SOPORTE APLICACION </option>
                               </select>
