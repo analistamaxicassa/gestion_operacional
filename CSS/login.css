@@ -1,0 +1,37 @@
+/*!
+ * Start Bootstrap - SB Admin 2 v3.3.7+1 (http://startbootstrap.com/template-overviews/sb-admin-2)
+ * Copyright 2013-2016 Start Bootstrap
+ * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap/blob/gh-pages/LICENSE)
+ */
+body {
+  background-color: #ffdd5a;
+  -webkit-animation-name: login-maxicassa; /* Safari 4.0 - 8.0 */
+  -webkit-animation-duration: 30s; /* Safari 4.0 - 8.0 */
+  animation-name: login-maxicassa;
+  animation-duration: 30s;
+}
+.login-panel {
+  margin-top: 25%;
+}
+.login-panel > .panel-heading {
+  font-family: 'Merriweather', serif;
+  text-shadow: -1px 0 white, 0 1px white,
+      1px 0 white, 0 -1px white;
+  border-color: #002F87;
+  color: #002F87;
+  background-color: #2e6da4;
+}
+.login-panel > .panel-body {
+  border-color: #002F87;
+  color: #002F87;
+  background-color: white;
+}
+@-webkit-keyframes login-maxicassa {
+    from {background-color: #ffdd5a;}
+    to {background-color: #002F87;}
+}
+/* Standard syntax */
+@keyframes login-maxicassa {
+    from {background-color: #ffdd5a;}
+    to {background-color: #002F87;}
+}

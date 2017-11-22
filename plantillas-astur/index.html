@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	
+	<meta charset="UTF-8">
+	<meta name="format-detection" content="telephone-no">
+	<meta name="viewport" content="user-scalable=no, initial-scale=1, minimum-scale=1, maximum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi">
+	<title>Prueba plantilla</title>
+	<link rel="stylesheet" href="../guayabita/css/main.css">
+	<link rel="stylesheet" href="../guayabita/css/themes/default/jquery.mobile-1.3.2.css">
+    
+    
+<script>
+
+
+  
+        function evalcero()
+			{
+			var cas = 0;
+			var pj = 0; 
+			var pm = 0;
+			var pg = 0;
+     		var cas = parseInt(document.getElementById('vcase').value);
+			-->document.getElementById('vcase').readOnly= true;
+			pj = parseInt(document.getElementById('presupuesto_jugador').value);
+			pg = pj;
+			evaluno(pj, pg, cas, pm);
+			
+			}
+		
+		function evaluno(pj, pg, cas, pm)
+			{	
+			
+			if (pm == 0)
+						{
+						pg = parseInt(pg) - parseInt(cas);
+						document.guayabita.presupuesto_general.value=pg;
+						pj = parseInt(pj) - parseInt(cas);
+						document.guayabita.presupuesto_jugador.value=pj;
+						pm = parseInt(pm)+(parseInt(cas) *2);
+						document.guayabita.presupuesto_mesa.value=pm;
+						}
+					
+			while (pg>cas && pj>cas)
+			{
+				
+				alert("lanzar dados primer intento")
+				var l1 =Math.floor(Math.random()*6)+1;
+
+-->				<a href="http://www.gifsanimados.org/cat-dados-710.htm"><img src="http://www.gifsanimados.org/data/media/710/dado-imagen-animada-0012.gif" border="0" alt="dado-imagen-animada-0012"/></a>
+				alert("el primer lanzamiento es "+l1);
+				document.guayabita.lanzamiento1.value=l1;
+				if (l1 == 1 || l1 == 6)
+					{
+						-->alert("Debes casar= "+cas);
+						-->alert("mesa= "+pm);
+						-->alert("case= "+cas);
+					pj = parseInt(pj) - parseInt(cas);
+					document.guayabita.presupuesto_jugador.value=pj;
+					pm = parseInt(pm) + parseInt(cas);
+					document.guayabita.presupuesto_mesa.value=pm;
+					
+					evaluno(pj, pg, cas, pm);
+					
+					}
+				else {
+					alert ("El valor maximo a apostar es "+pm);
+					var pregunta = prompt ("Quiere Apostar (S/N)");
+					if (pregunta == 'S')
+						{
+						var ap = prompt ("Digite el valor de la apuesta");
+							while (ap <= pm)
+								{
+								alert("lanzar segundo intento")
+								var l2 =Math.floor(Math.random()*6)+1;
+								alert("El segundo lanzamiento es "+l2);
+									if (l2 > l1)
+										{
+										pj=parseInt(pj)+parseInt(ap);
+										pm = parseInt(pm) - parseInt(ap);
+										ap= 0;
+										alert ("!!Felicitaciones haz ganado!!, Tu nuevo presupuesto de juego es:  "
+										+pj);
+										document.guayabita.presupuesto_jugador.value=pj;
+										document.guayabita.presupuesto_mesa.value=pm;
+										var seguir = prompt ("Quiere seguir jugando (S/N)");
+											if (seguir == 'S'){
+												if(pm==0){
+															alert("La mesa esta en ceros es necesario volver a casar")
+															}
+												evaluno(pj, pg, cas, pm);
+												}
+											else {
+											alert("Vuelve pronto tu presupuesto quedo en: "+pj);
+											exit();
+											 }
+										}
+									if (l1==l2)
+										{
+										alert("No has ganado ni perdido, Uff que salvada!!");
+										ap = 0;
+										
+											evaluno(pj, pg, cas, pm);
+											}
+										
+									else {
+										
+										
+										pj = parseInt(pj) - parseInt(ap);
+										pm = parseInt(pm) + parseInt(ap);
+										ap = 0;
+										alert ("Lo sentimos el segundo lanzamiento fue menor, tu 													                                                presupuesto de juego ahora es: "+pj);
+										document.guayabita.presupuesto_jugador.value=pj;
+										document.guayabita.presupuesto_mesa.value=pm;
+											evaluno(pj, pg, cas, pm);									
+										
+										}
+									
+									}
+							
+								
+							ap = prompt ("puede apostar maximo"+pm+
+							"digite el valor de la apuesta de nuevo");
+							-->Volver a 
+								
+							
+						
+						}
+					else 
+					{
+						pm = parseInt(pm) + (parseInt(cas)/2)
+						document.guayabita.presupuesto_mesa.value=pm;
+						pj= parseInt(pj) - (parseInt(cas)/2);
+						document.guayabita.presupuesto_jugador.value=pj;
+						
+						document.guayabita.vcase.value=cas;
+						
+						
+							evaluno(pj, pg, cas, pm);
+						}
+					
+					}
+		
+			}
+		 
+		if (pg<=cas){
+			alert ("has ganado la partida, felicitaciones!!");
+			exit();
+			}	
+			else {
+				alert ("No tienes Presupuesto suficiente para jugar, Vuelve ");
+				exit();
+			}
+		}
+</script>
+
+	<script type="text/javascript" src='../eval_desempeno/cordova.js'></script>
+	<script type="text/javascript" src="../eval_desempeno/js/jquery.js"></script>
+	<script type="text/javascript" src="../eval_desempeno/js/jquery.mobile-1.3.2.js"></script>
+	<script type="text/javascript" src="../eval_desempeno/js/mustache.js"></script>
+	
+	<script>
+
+		var notedata = {notetitle:"", notedetail:"", imagesource:"", notelat:"", notelon:""};
+		var notetemplate = '<input type="text" name="notetitle" id="notetitle" value="{{notetitle}}" placeholder="TÃ­tulo de Nota"/><textarea cols="40" rows="8" name="notedetail" id="notedetail" placeholder="Detalle de Nota">{{notedetail}}</textarea><input id="addphoto" type="button" data-icon="plus" value="Agrega una Foto" /><img id="noteimage" src="{{imagesource}}" /><div id="map">Marcador de PosiciÃ³n</div><input id="savenote" type="button" data-theme="a" value="Guardar Nota" />';
+
+		$(document).on("pageinit", function(){
+
+			$("#newnote").live("pagecreate", function(){
+
+				var html = Mustache.to_html(notetemplate, notedata);
+				$("#notedetailcontent").html(html);
+
+			});
+
+		});
+
+		function inicial(){
+			document.addEventListener("deviceready", onReady, false);
+		}
+
+		function onReady(){
+
+			alert("Ejecutada Correctamente");
+
+		}
+
+
+	</script>
+
+</head>
+<body onload="inicial()">
+
+	<div data-role="page" id="main">
+	<div data-role="header" class="logo">
+		<img src="../guayabita/img/logo.png" />
+	</div>
+	<div data-role="content">
+		<ul id="notelist" data-role="listview">
+		  <p>
+<input type="submit" name="jugar" id="jugar" value="INICIAR JUEGO" onclick="window.location.href='../guayabita/guayabita.html';" />
+
+		   		    
+	      </p>
+		 
+		</ul>
+</div>
+<div data-role="content">
+		<ul id="notelist" data-role="listview">
+		  <p>
+<input type="submit" name="detalles" id="detalles" value="Acerca de.." onclick="window.location.href='../guayabita/acercade.html';" />
+		   		    
+	      </p>
+		 
+		</ul>
+</div>
+
+
+
+</div>
+<div data-role="page" id="newnote"></div>
+</body>
+
+
+</html>

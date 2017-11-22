@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	
+	<meta charset="UTF-8">
+	<meta name="format-detection" content="telephone-no">
+	<meta name="viewport" content="user-scalable=no, initial-scale=1, minimum-scale=1, maximum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi">
+	<title>Prueba plantilla</title>
+	<link rel="stylesheet" href="../guayabita/css/main.css">
+	<link rel="stylesheet" href="../guayabita/css/themes/default/jquery.mobile-1.3.2.css">
+ 
+ 
+ <script>
+
+function changeImage(l1)
+ {
+	
+    var image = document.getElementById('myImage');
+    if ( image.src.match("bulbon")) {
+        image.src = "./guayabita./img/dado.png";
+    }	
+	 else {
+		  if ( l1 == 1) {
+        image.src = "../guayabita/img/dado1.png";
+    }
+	if ( l1 == 2) {
+        image.src = "../guayabita/img/dado2.png";
+    }
+	if ( l1 == 3) {
+        image.src = "../guayabita/img/dado3.png";
+    }
+	if ( l1 == 4) {
+        image.src = "../guayabita/img/dado4.png";
+    }
+	if ( l1 == 5) {
+        image.src = "../guayabita/img/dado5.png";
+	}
+	if ( l1 == 6) {
+        image.src = "../guayabita/img/dado6.png";
+	}
+     
+    }
+}
+</script>   
+   
+
+<script>
+
+  
+        function evalcero()
+			{
+			
+			var cas = 0;
+			var pj = 0; 			
+			var pg = 0;
+			evalinicio();
+			}
+			
+			
+        function evalinicio()
+			{
+     		var cas = parseInt(document.getElementById('vcase').value);
+						-->document.getElementById('vcase').readOnly= true;
+			pj = parseInt(document.getElementById('presupuesto_jugador').value);
+			pg = pj;
+			document.guayabita.presupuesto_general.value=pg;
+			var pm = 0;
+			document.guayabita.presupuesto_mesa.value=pm;
+			//document.getElementById('dado').style.visibility = "visible";
+			alert("Lanzar dado");
+			evaluno(pj, pg, cas, pm);
+			
+			}
+		
+		function evaluno(pj, pg, cas, pm)
+			{
+				
+	/*		document.guayabita.presupuesto_jugador.value=pg;		
+			document.guayabita.vcase.value=cas;	
+			document.guayabita.presupuesto_general.value=pg;	
+			document.guayabita.presupuesto_mesa.value=pm;	*/
+					
+		
+			if (pm == 0)
+						{
+						pg = parseInt(pg) - parseInt(cas);
+						document.guayabita.presupuesto_general.value=pg;
+						pj = parseInt(pj) - parseInt(cas);
+						document.guayabita.presupuesto_jugador.value=pj;
+						pm = parseInt(pm)+(parseInt(cas) *2);
+						document.guayabita.presupuesto_mesa.value=pm;
+						}
+					
+			while (pg>cas && pj>cas)
+			{
+				 
+				//mensaje = "lanzar dados primer intento";
+				
+			//	document.guayabita.mensaje.value= mensaje;
+			//	alert("lanzar dados primer intento**")
+				
+				
+			//	
+				var l1 =Math.floor(Math.random()*6)+1;
+				document.guayabita.lanzamiento1.value=l1;
+			//alert ("el primer lanzamiento es "+l1);
+				changeImage(l1);
+				
+			
+				if (l1 == 1 || l1 == 6)
+					{
+						alert("Debes casar= "+cas);
+						-->alert("mesa= "+pm);
+						-->alert("case= "+cas);
+					pj = parseInt(pj) - parseInt(cas);
+					document.guayabita.presupuesto_jugador.value=pj;
+					pm = parseInt(pm) + parseInt(cas);
+					document.guayabita.presupuesto_mesa.value=pm;
+					alert("lanzar dado ");
+					evaluno(pj, pg, cas, pm);
+					
+					}
+				else {
+					//alert ("El valor maximo a apostar es "+pm);
+
+					var pregunta = prompt ("Quiere Apostar (S/N)");
+					if (pregunta == 'S' || pregunta == 's'  )
+						{
+						var ap = prompt ("Digite el valor de la apuesta");
+						document.guayabita.apuesta.value=ap;
+							while (ap <= pm)
+								{
+								
+								alert("Lanzar dado");
+								var l2 =Math.floor(Math.random()*6)+1;
+								changeImage(l2);
+								
+									if (l2 > l1)
+										{
+										pj=parseInt(pj)+parseInt(ap);
+										pm = parseInt(pm) - parseInt(ap);
+										ap= 0;
+										document.guayabita.apuesta.value=ap;
+										alert ("!!Felicitaciones haz ganado!!, Tu nuevo presupuesto de juego es:  "
+										+pj);
+										document.guayabita.presupuesto_jugador.value=pj;
+										document.guayabita.presupuesto_mesa.value=pm;
+										var seguir = prompt ("Quiere seguir jugando (S/N)");
+											if (seguir == 'S' || pregunta == 's' ){
+												if(pm==0){
+															alert("La mesa esta en ceros es necesario volver a casar")
+															}
+												alert("Lanzar dado");
+												evaluno(pj, pg, cas, pm);
+												}
+											else {
+											alert("Vuelve pronto tu presupuesto quedo en: "+pj);
+											exit();
+											 }
+										}
+									if (l1==l2)
+										{
+										alert("No has ganado ni perdido, Uff que salvada!!");
+										ap = 0;
+										alert("Lanzar dado");
+											evaluno(pj, pg, cas, pm);
+											}
+										
+									else {
+										
+										
+										pj = parseInt(pj) - parseInt(ap);
+										pm = parseInt(pm) + parseInt(ap);
+										ap = 0;
+										alert ("Lo sentimos el segundo lanzamiento fue menor, tu 													                                                presupuesto de juego ahora es: "+pj);
+										document.guayabita.presupuesto_jugador.value=pj;
+										document.guayabita.presupuesto_mesa.value=pm;
+										alert("Lanzar dado");
+											evaluno(pj, pg, cas, pm);									
+										
+										}
+									
+									}
+							
+								
+							ap = prompt ("puede apostar maximo"+pm+
+							"digite el valor de la apuesta de nuevo");
+							-->Volver a 
+								
+							
+						
+						}
+					else 
+					{
+						pm = parseInt(pm) + (parseInt(cas)/2)
+						document.guayabita.presupuesto_mesa.value=pm;
+						pj= parseInt(pj) - (parseInt(cas)/2);
+						document.guayabita.presupuesto_jugador.value=pj;
+						alert("lazar dado");
+						document.guayabita.vcase.value=cas;
+						
+						
+							evaluno(pj, pg, cas, pm);
+						}
+					
+					}
+		
+			}
+		 
+		if (pg<=cas){
+			alert ("has ganado la partida, felicitaciones!!");
+			exit();
+			}	
+			else {
+				alert ("No tienes Presupuesto suficiente para jugar, Asigna tu presupuesto y clic en Jugar ");
+				exit();
+			}
+		}
+</script>
+
+	<script type="text/javascript" src='../guayabita/cordova.js'></script>
+	<script type="text/javascript" src="../guayabita/js/jquery.js"></script>
+	<script type="text/javascript" src="../guayabita/js/jquery.mobile-1.3.2.js"></script>
+	<script type="text/javascript" src="../guayabita/js/mustache.js"></script>
+	
+
+
+</head>
+<body>
+
+
+
+		
+      <form  name="guayabita">
+<p>
+  <label for="vcase"></label>
+  </p>
+ 
+  <table width="38%" border="0" align="center">
+    <tr>
+      <th scope="col">&nbsp;</th>
+      <th scope="col">&nbsp;</th>
+      <th scope="col">&nbsp;</th>
+      <th scope="col">&nbsp;</th>
+    </tr>
+    <tr>
+    
+      <th colspan="4" scope="col"><img id="guayab"  src="../guayabita/img/guayabita.png" width="316" height="120"></th>
+    </tr>
+    <tr>
+      <th colspan="2" rowspan="4" scope="col"><img id="myImage" onClick="evalinicio()" src="../guayabita/img/dado.png" width="89" height="120"></th>
+      <th scope="col">Valor del case </th>
+      <th scope="col"><input name="vcase" type="text" id="vcase" size="10" /></th>
+    </tr>
+    <tr>
+      <th scope="col">Presupuesto Jugador</th>
+      <th width="39%" scope="col"><input name="presupuesto_jugador" type="text" id="presupuesto_jugador" size="20"  /></th>
+    </tr>
+    <tr>
+      <th width="29%" scope="col">&nbsp;</th>
+      <th width="39%" scope="col">&nbsp;</th>
+    </tr>
+    <tr>
+      <td><input type="submit"  class="btn btn-primary btn-lg"  name="asignar" id="asignar" value="ASIGNAR"  onClick="evalcero()" /></td>
+      <th width="39%" scope="col">&nbsp;</th>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td align="center">Presupuesto mesa</td>
+      <td align="center">Presupuesto general</td>
+      <td align="center">&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td align="center"><input name="presupuesto_mesa" type="text" id="presupuesto_mesa"  style="background:#CCC" size="20" readonly /></td>
+      <td align="center"><input name="presupuesto_general" type="text" id="presupuesto_general" style="background:#CCC" size="20" readonly  align="right"  /></td>
+      <td align="center">&nbsp;</td>
+    </tr>
+  </table>
+
+  <table  align="center" width="45%" border="0">
+    <tr>
+      <th width="61%"  align="center" scope="col">Primer lanzamiento        </th>
+      <th width="39%" scope="col">Valor Apuesta
+        <label for="apuesta"></label></th>
+    </tr>
+    <tr>
+      <td><input name="lanzamiento1" type="text" id="lanzamiento1" size="2" readonly /></td>
+      <td><input type="text" name="apuesta" id="apuesta"></td>
+    </tr>
+  </table>
+ 
+  <p>&nbsp;</p>
+<p>
+  <label for="lanzamiento1"></label>
+</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+</form>
+
+	
+
+
+</body>
+
+
+</html>
