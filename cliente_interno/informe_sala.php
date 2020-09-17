@@ -20,7 +20,6 @@
     {
       $sala = $_GET['sala'];
     }
-
     $userID= $_SESSION['userID'];
 
     $link_queryx = Conectarse_queryx();
@@ -43,7 +42,7 @@
 	$qry_sqlpre=$link_personal->query($sqlpre);
 	$rs_qrypre=$qry_sqlpre->fetch_object();  ///consultar
 
-	if (empty($rs_qrypre)) {
+	if (false) {
     echo 'Esta sala no esta habilitada para su consulta';
 	exit();
 	}
@@ -174,125 +173,96 @@ $sql="SELECT  tipo_sala, presupuesto, jefeoperacion, localidad, ci_print FROM sa
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="../estilos1.css">
-		<script>
-		 function actualizar_concepto_sala(sala)
-        {
-				var parametros = {
-				"sala": sala,
-				};
-                $.ajax({
-                data: parametros,
-                url: 'http://190.144.42.83:9090/plantillas/cliente_interno/actualizar_concepto_sala.php',
-                type: 'post',
-                   beforeSend: function ()
-                    {
-                        $("#respuesta1").html("Validando, espere por favor...");
-                    },
-                    success: function (response)
-                    {
-                        $("#respuesta1").html(response);
-						 {
-					    // document.getElementById('consultar').disabled=true;
-		                $("#validador").html(response);
-                    }
-                    }
-        });
-        }
-      </script>
     </head>
   <body>
-    <ol class="breadcrumb">
+    <ol class="breadcrumb" hidden="true">
       <li class="active">Informe sala</li>
       <li><a href="actualizar_dsalas.php?sala=<?php echo $sala;?>">Modificar sala</a></li>
     </ol>
-<br>
-  <div class="table-responsive">
-    <table class="table table-bordered">
-      <thead>
-        <tr class="bg-primary">
-          <th>Fecha</th>
-          <th>Concepto</th>
-          <th>Calificación</th>
-          <th>Hallazgo</th>
-          <th>Tarea</th>
-          <th>Responsable</th>
-          <th>Fecha Control</th>
-          <th>Estado</th>
-        </tr>
-      </thead>
-      <tbody>
-      <?php
-        //consulta de concepto de sala
-        $sql_resumen="SELECT fecha, concepto_esp, calificacion, hallazgo, tarea, responsable, fecha_control, ESTADO
-        FROM concepto_sala WHERE cc='$sala' ORDER BY fecha DESC LIMIT 5";
-        $query_resumen=$link_personal->query($sql_resumen);
-        $resumen=$query_resumen->fetch_object();  ///consultar
+    <div class="table-responsive col-md-12">
+      <table class="table table-bordered">
+        <thead>
+          <tr class="bg-primary">
+            <th>Fecha</th>
+            <th>Concepto</th>
+            <th>Calificación</th>
+            <th>Hallazgo</th>
+            <th>Tarea</th>
+            <th>Responsable</th>
+            <th>Fecha Control</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+        <?php
+          //consulta de concepto de sala
+          $sql_resumen="SELECT fecha, concepto_esp, calificacion, hallazgo, tarea, responsable, fecha_control, ESTADO
+          FROM concepto_sala WHERE cc='$sala' ORDER BY fecha DESC LIMIT 5";
+          $query_resumen=$link_personal->query($sql_resumen);
+          $resumen=$query_resumen->fetch_object();  ///consultar
 
-        if (empty($resumen)) {
-          echo 'No existen registros';
-        }
-        else
-        {
-          do{
-      ?>
-                <tr>
-                  <td><?php echo ($resumen->fecha); ?></td>
-                  <td><?php echo  ($resumen->concepto_esp); ?></td>
-                  <td><?php echo ($resumen->calificacion); ?></td>
-                  <td><?php echo  ($resumen->hallazgo); ?></td>
-                  <td><?php echo  ($resumen->tarea); ?></td>
-                  <td><?php echo  ($resumen->responsable); ?></td>
-                  <td><?php echo ($resumen->fecha_control); ?></td>
-                  <td><?php echo  ($resumen->ESTADO); ?></td>
-                </tr>
-      <?php
-          }while($resumen=$query_resumen->fetch_object());
-          $query_resumen->close();
-        }
-      ?>
-      </tbody>
-    </table>
-  </div>
-  <br>
-  <div class="table-responsive">
-    <table class="table table-bordered">
-      <thead>
-        <tr class="bg-primary">
-          <th>CO</th>
-          <th>Sala</th>
-          <th>Tipo</th>
-          <th>Jefe de operación</th>
-          <th>Presupuesto</th>
-          <th>Ventas mes</th>
-          <th>Área de exhibición</th>
-          <th>Área de bodega</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><?php echo $sala;?></td>
-          <td><?php echo $nombresala; ?></td>
-          <td><?php echo $tiposala; ?></td>
-          <td><?php echo $jefeoperacion; ?></td>
-          <td><?php echo "$".number_format($presupuesto, 0, ",", "."); ?></td>
-          <td><?php echo "$".number_format($ventaSala, 0, ",", "."); ?></td>
-          <td><?php echo $area_exh." M²"; ?></td>
-          <td><?php echo $area_bod." M²"; ?></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+          if (empty($resumen)) {
+            echo 'No existen registros';
+          }
+          else
+          {
+            do{
+        ?>
+                  <tr>
+                    <td><?php echo ($resumen->fecha); ?></td>
+                    <td><?php echo  ($resumen->concepto_esp); ?></td>
+                    <td><?php echo ($resumen->calificacion); ?></td>
+                    <td><?php echo  ($resumen->hallazgo); ?></td>
+                    <td><?php echo  ($resumen->tarea); ?></td>
+                    <td><?php echo  ($resumen->responsable); ?></td>
+                    <td><?php echo ($resumen->fecha_control); ?></td>
+                    <td><?php echo  ($resumen->ESTADO); ?></td>
+                  </tr>
+        <?php
+            }while($resumen=$query_resumen->fetch_object());
+            $query_resumen->close();
+          }
+        ?>
+        </tbody>
+      </table>
+    </div>
+    <br>
+    <div class="table-responsive col-md-12">
+      <table class="table table-bordered">
+        <thead>
+          <tr class="bg-primary">
+            <th>CO</th>
+            <th>Sala</th>
+            <th>Tipo</th>
+            <th>Jefe de operación</th>
+            <th>Presupuesto</th>
+            <th>Ventas mes</th>
+            <th>Área de exhibición</th>
+            <th>Área de bodega</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><?php echo $sala;?></td>
+            <td><?php echo $nombresala; ?></td>
+            <td><?php echo $tiposala; ?></td>
+            <td><?php echo $jefeoperacion; ?></td>
+            <td><?php echo "$".number_format($presupuesto, 0, ",", "."); ?></td>
+            <td><?php echo "$".number_format($ventaSala, 0, ",", "."); ?></td>
+            <td><?php echo $area_exh." M²"; ?></td>
+            <td><?php echo $area_bod." M²"; ?></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   <br>
   <div class="col-md-8 col-md-offset-2">
     <div class="btn-group btn-group-justified btn-group-lg my-btn-group-responsive">
-      <a type="button" class="btn btn-primary" href="informe_seguimiento.php?sala=<?php echo $sala; ?>">Seguimiento de tareas</a>
+      <!--<a type="button" class="btn btn-primary" href="informe_seguimiento.php?sala=<?php //echo $sala; ?>" disabled>Seguimiento de tareas</a>-->
+      <a type="button" class="btn btn-primary" href="#" disabled>Seguimiento de tareas</a>
       <a type="button" class="btn btn-primary" href="informe_hist_sala2.php?sala=<?php echo $sala; ?>">Reportes sala</a>
-      <a type="button" class="btn btn-primary" href="#">Libreta de calificaciones</a>
+      <a type="button" class="btn btn-primary" href="#" disabled>Libreta de calificaciones</a>
     </div>
-  </div>
-  <div class="row">
-
   </div>
   <br>
   <div class="col-md-6 col-md-offset-3">
@@ -379,7 +349,8 @@ do{
 ?>
           <tr>
             <td><?php echo $row_n->CARGO_NOMBRE; ?></td>
-            <td><a href="../cliente_interno/informe_cliente_interno2.php?cedula=<?php echo $row_n->CEDULA;?>&sala=<?php echo $sala;?>"> <?php echo $row_n->NOMBRE; ?></a></td>
+            <!--<td><a href="../cliente_interno/informe_cliente_interno2.php?cedula=<?php //echo $row_n->CEDULA;?>&sala=<?php //echo $sala;?>"> <?php //echo $row_n->NOMBRE; ?></a></td>-->
+            <td><a href="#"> <?php echo $row_n->NOMBRE; ?></a></td>
           </tr>
 <?php
   }while(($row_n = oci_fetch_object($stid7)) != false);
@@ -390,7 +361,7 @@ do{
     </div>
   </div>
 <br>
-<table border="0" style="border-collapse:collapse; border:#69F solid 1px; font-family:Verdana, Geneva, sans-serif; font-size:10px " width="60%" align="center">
+<table border="0" style="border-collapse:collapse; border:#69F solid 1px; font-family:Verdana, Geneva, sans-serif; font-size:10px " width="60%" align="center" hidden="true">
   <tr>
     <td class="header" colspan="4" align="left" valign="middle"><strong>EN ENTRENAMIENTO FUNCIONAL</strong></td>
     <td width="260" class="header" colspan="6" align="justify" valign="middle">&nbsp;</td>
@@ -412,7 +383,7 @@ do{
   </tr>
 </table>
 
-<table border="0" style="border-collapse:collapse; border:#69F solid 1px; font-family:Verdana, Geneva, sans-serif; font-size:10px " width="60%" align="center">
+<table border="0" style="border-collapse:collapse; border:#69F solid 1px; font-family:Verdana, Geneva, sans-serif; font-size:10px " width="60%" align="center" hidden="true">
   <tr>
     <td class="header" colspan="4" align="left" valign="middle"><strong>ROTATIVOS</strong></td>
     <td width="260" class="header" colspan="6" align="justify" valign="middle">&nbsp;</td>

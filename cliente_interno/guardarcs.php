@@ -1,24 +1,25 @@
 <?php
 	require_once('../conexionesDB/conexion.php');
+	require "../vendor/autoload.php";
 
-	$link=Conectarse_personal();
-	//echo $link->character_set_name();
-	//recojo variables
+  use PHPMailer\PHPMailer\PHPMailer;
+  use PHPMailer\PHPMailer\Exception;
+	$link = Conectarse_personal();
+
 	$sala=$_POST['sala'];
-	$concepto_det= $_POST['concepto_det'];
-	$calificacion= $_POST['nota'];
-	$hallazgo= $_POST['hallazgo'];
-	$tarea= $_POST['tarea'];
-	$responsable= $_POST['responsable'];
-	$fcontrol=$_POST['fcontrol'];
-	$autor= $_POST['evaluador'];
-	$f_visita= $_POST['fecha_visita'];
-	$hoy=date("d/m/y");
+	$concepto_det = $_POST['concepto_det'];
+	$calificacion = $_POST['nota'];
+	$hallazgo = $_POST['hallazgo'];
+	$tarea = $_POST['tarea'];
+	$responsable = $_POST['responsable'];
+	$fcontrol = $_POST['fcontrol'];
+	$autor = $_POST['evaluador'];
+	$f_visita = $_POST['fecha_visita'];
+	$hoy = date("d/m/y");
 	$fecha = new DateTime('NOW');
 	$fechaActual = $fecha->format('Y-m-d');
 
 	$sql="INSERT INTO personal.concepto_sala ( cc, fecha, concepto_esp, calificacion, hallazgo, tarea, responsable, fecha_control, autor, estado) VALUES ('$sala', '$f_visita', '$concepto_det', '$calificacion', '$hallazgo', '$tarea', '$responsable', '$fcontrol', '$autor', 'PENDIENTE');";
-	//echo "<br>".$sql;
 	$qry_sql=$link->query($sql);
 
 	//consulta de email de sala
@@ -29,43 +30,56 @@
 	$rs_qrya->email;
 if(true)
 {
-	require_once '../vendor/autoload.php';
+	$mailer = new PHPMailer(true);
 
-	// Create the Transport
-	$transport = (new Swift_SmtpTransport('aspmx.l.google.com', 25))
-	->setUsername('ares@ceramigres.com')
-	->setPassword('T3mp0r4l123')
-	;
+  try {
+    $cuerpo='<center style="color:#002F87;">Se ha realizado una solicitud a su área.<br></center>';
+		$sdlinea='<br>';
+	  $impfecha='<br><b>FECHA: </b> ';
+		$impsala='<br><b>SALA: </b>';
+		$impconcepto='<br><b>SOLICITUD: </b>';
+		$impautor='<br><b>AUTOR: </b>';
+		$espacio=' : ';
 
-	// Create the Mailer using your created Transport
-	$mailer = new Swift_Mailer($transport);
+		$body= $cuerpo.$impfecha.$fechaActual.$impsala.$rs_qrya->nombre.$impconcepto.$concepto_det.$espacio.$tarea.$impautor.$autor;
 
-	$asunto = "Concepto de visita a sala -  Auditoria Operacional";
+    $mailer->isSMTP();
 
-	$cuerpo='
-	<center>
-	Se ha realizado una solicitud a su area. <br>
-	</center>';
+    $mailer->SMTPOptions = [
+      'ssl'=> [
+          'verify_peer' => false,
+          'verify_peer_name' => false,
+          'allow_self_signed' => true
+      ]
+    ];
 
-	$sdlinea='<br>';
-  $impfecha='<br><b>FECHA:</b> ';
-	$impsala='<br><b>SALA: </b>';
-	$impconcepto='<br><b>SOLICITUD: </b>';
-	$impautor='<br><b>AUTOR: </b>';
-	$espacio=' : ';
+    $mailer->Host = 'smtp.gmail.com';
+    $mailer->SMTPAuth = true;
+    $mailer->Username = 'ares@ceramigres.com';
+    $mailer->Password = 'M41l3rD43m0n+';
+    $mailer->SMTPSecure = 'tls';
+    $mailer->Port = 587;
 
-	$body= $cuerpo.$impfecha.$fechaActual.$impsala.$rs_qrya->nombre.$impconcepto.$concepto_det.$espacio.$tarea.$impautor.$autor;
+    $mailer->CharSet = 'UTF-8';
+    $mailer->setFrom('ares@ceramigres.com', 'Plataforma del Grupo Empresarial Maxicassa');
+    /*if ($es_pegomax == "1") {
+      $mailer->addAddress('pazysalvo@pegoperfecto.com', 'PEGOMAX');
+    }*/
+    $mailer->addAddress($responsable);
 
-	// Create a message
-	$message = (new Swift_Message($asunto))
-	->setFrom(['ares@ceramigres.com' => 'Plataforma del Grupo Empresarial Maxicassa'])
-	->setTo([$responsable => 'Sala'])
-	->setBody($body, 'text/html')
-	;
+    $mailer->isHTML(true);
+    $mailer->Subject = 'Concepto de visita a sala -  Auditoria Operacional';
+    $mailer->Body = $body;
 
-	// Send the message
-	$result = $mailer->send($message);
-	header("Location: selecciona_sala.php");
+    $mailer->send();
+    $mailer->ClearAllRecipients();
+    echo "Mensaje enviado";
+
+  } catch (Exception $e) {
+    echo "Falla en el envío del mensaje. INFO: " . $mailer->ErrorInfo;
+  }
+
+	header("Location: informe_sala.php?sala=$sala");
 }
 
 ?>

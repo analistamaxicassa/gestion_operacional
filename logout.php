@@ -6,7 +6,7 @@
   {
     if ($_GET['origen'] == '1')
     {
-      $Location = "Location: Libreta_calificacionPDV/index.php";
+      $Location = "Location: vista_sala/index.php";
     }
     elseif ($_GET['origen'] == '2')
     {
@@ -14,7 +14,7 @@
     }
     elseif ($_GET['origen'] == '3')
     {
-      $Location = "Location: cliente_interno/index.php";
+      $Location = "Location: gerentes/index.php";
     }
     elseif ($_GET['origen'] == '4')
     {

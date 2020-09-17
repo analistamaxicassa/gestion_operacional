@@ -94,5 +94,10 @@
   }
   oci_close($link_queryx);
   $link_personal->close();*/
-  phpinfo();
+  $hash = password_hash("luludeCartón", PASSWORD_DEFAULT);
+  if (password_verify('luludeCartón', $hash)) {
+    echo '¡La contraseña es válida!';
+  } else {
+      echo 'La contraseña no es válida.';
+  }
  ?>

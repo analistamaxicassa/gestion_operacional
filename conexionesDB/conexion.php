@@ -1,4 +1,20 @@
 <?php
+function Conectarse_maxlibreta() {
+  if (!($link_maxlibreta = new mysqli('localhost', 'root', 'KcZnMxCUXWmmpBLS'))) {
+    echo "Error conectando al servidor de base de datos.";
+    exit();
+  }
+  if (!$link_maxlibreta->set_charset("utf8")) {
+  printf("Error cargando el conjunto de caracteres utf8: %s\n", $link_maxlibreta->error);
+  exit();
+  }
+  if (!($link_maxlibreta->select_db('maxicassa_libreta'))) {
+    echo "Error seleccionando la base de datos.";
+    exit();
+  }
+    return $link_maxlibreta;
+}
+
   function Conectarse_crm() {
     if (!($link = new mysqli('localhost', 'root', 'KcZnMxCUXWmmpBLS'))) {
       echo "Error conectando al servidor de base de datos.";
@@ -24,7 +40,7 @@
   }
 
   function Conectarse_libreta() {
-    if (!($link_caronte = new mysqli('10.1.0.48', 'IT008', 'KcZnMxCUXWmmpBLS'))) {
+    if (!($link_caronte = new mysqli('localhost', 'root', 'KcZnMxCUXWmmpBLS'))) {
       echo "Error conectando al servidor de base de datos.";
       exit();
     }
@@ -73,7 +89,7 @@
 
   function Conectarse_personal()
   {
-    if (!($link_ares = new mysqli('10.1.0.48', 'IT008', 'KcZnMxCUXWmmpBLS'))) {
+    if (!($link_ares = new mysqli('localhost', 'root', 'KcZnMxCUXWmmpBLS'))) {
       echo "Error conectando al servidor de base de datos.";
       exit();
     }
@@ -88,6 +104,22 @@
     return $link_ares;
   }
 
+  function Conectarse_queryx_mysql()
+  {
+    if (!($link_queryx_seven = new mysqli('localhost', 'root', 'KcZnMxCUXWmmpBLS'))) {
+      echo "Error conectando al servidor de base de datos.";
+      exit();
+    }
+    if (!$link_queryx_seven->set_charset("utf8")) {
+    printf("Error cargando el conjunto de caracteres utf8: %s\n", $link_queryx_seven->error);
+    exit();
+    }
+    if (!($link_queryx_seven->select_db('queryx_seven'))) {
+      echo "Error seleccionando la base de datos.";
+      exit();
+    }
+    return $link_queryx_seven;
+  }
 
   function Conectarse_ares2()
   {

@@ -276,8 +276,8 @@ do{
                                 <option value="">Seleccione un responsable</option>
                                 <option value="<?php echo $rs_qrya->email;?>">ADMINISTRADOR</option>
                                 <option value="auditoria@ceramigres.com">AUDITORIA</option>
-                                <option value="revisar">CADENA ABASTECIMIENTO</option> <!-- TODO Obtener el email-->
-                                <option value="gcarrillo@ceramigres.com">CAPACITACION</option>
+                                <option value="jabastecimiento@ceramigres.com">CADENA ABASTECIMIENTO</option> <!-- TODO Obtener el email-->
+                                <option value="procesos@ceramigres.com">CAPACITACION</option>
                                 <option value="cartera@ceramigres.com">CARTERA</option>
                                 <option value="contabilidad@ceramigres.com">CONTABILIDAD</option>
                                 <option value="ejecucion@ceramigres.com">COOR. OPERACIONES</option>
@@ -290,9 +290,9 @@ do{
                                 <option value="juridico@ceramigres.com">JURIDICO</option>
                                 <option value="jmercadeo@ceramigres.com">MERCADEO</option>
                                 <option value="merchandising@ceramigres.com">MERCHANDISING</option>
-                                <option value="desarrollador@ceramigres.com">SISTEMAS Y TECNOLOGIA</option>
+                                <option value="druiz@ceramigres.com">SISTEMAS Y TECNOLOGIA</option>
                                 <option value="tesoreria@ceramigres.com">TESORERIA</option>
-                                <option value="lrodriguez@ceramigres.com">SOPORTE APLICACION </option>
+                                <option value="soportetecnologia@ceramigres.com">SOPORTE APLICACION </option>
                               </select>
                             </div>
                             <div class="form-group">

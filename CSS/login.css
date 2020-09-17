@@ -4,11 +4,13 @@
  * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap/blob/gh-pages/LICENSE)
  */
 body {
-  background-color: #ffdd5a;
+  background-color: #002F87;
   -webkit-animation-name: login-maxicassa; /* Safari 4.0 - 8.0 */
   -webkit-animation-duration: 30s; /* Safari 4.0 - 8.0 */
+  -webkit-animation-iteration-count: infinite; /* Safari 4.0 - 8.0 */
   animation-name: login-maxicassa;
   animation-duration: 30s;
+  animation-iteration-count: infinite;
 }
 .login-panel {
   margin-top: 25%;
@@ -27,11 +29,17 @@ body {
   background-color: white;
 }
 @-webkit-keyframes login-maxicassa {
-    from {background-color: #ffdd5a;}
-    to {background-color: #002F87;}
+  0%   {background-color:#002F87;}
+  25%  {background-color:#ffdd5a;}
+  50%  {background-color:#002F87;}
+  75%  {background-color:#e36600;}
+  100% {background-color:#002F87;}
 }
 /* Standard syntax */
 @keyframes login-maxicassa {
-    from {background-color: #ffdd5a;}
-    to {background-color: #002F87;}
+  0%   {background-color:#002F87;}
+  25%  {background-color:#ffdd5a;}
+  50%  {background-color:#002F87;}
+  75%  {background-color:#e36600;}
+  100% {background-color:#002F87;}
 }

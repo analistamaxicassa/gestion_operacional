@@ -4,7 +4,7 @@
 	$link_personal=Conectarse_personal();
 
 	$userID = $_SESSION['userID'];
-	$userName = strtok($_SESSION['nombre'], ' ');
+	$userName = $_SESSION['nombre'];
 
 	$sqlr = "SELECT * FROM cliente_interno_queryx";
 	//=$link_personal->query($sqlr);
@@ -22,10 +22,19 @@
 		$qry_sqle=$link_personal->query($sqle);
 	}
 
-	$sqlSalas = "SELECT cc, nombre FROM `salas` WHERE `activo` = '1' AND Jefeoperacion LIKE '%$userName%'";
+	if ($userID == "51911317") {
+		$sqlSalas = "SELECT cc, nombre FROM salas WHERE cc = '128' OR cc = '802' OR cc = '801' OR cc = '153' OR cc = '105' OR cc = '103' OR cc = '126' OR cc = '102' OR cc = '803' OR cc = '836' OR cc = '126'";
+	} else {
+		$sqlSalas = "SELECT cc, nombre FROM salas WHERE activo = '1' AND Jefeoperacion = '$userID'";
+	}
 	$resultadoSalas=$link_personal->query($sqlSalas);
-	//funcion fechas
-	//require_once("../PAZYSALVO/FuncionFechas.php");
+
+	//consulta de concepto de sala
+	$sql_resumen = "SELECT salas.nombre, cs.fecha, COUNT(cs.id) AS conceptos_evaluados, SUM(cs.calificacion) AS suma_calf FROM concepto_sala AS cs INNER JOIN salas ON cs.cc = salas.cc WHERE (DATE(cs.fecha) BETWEEN '$fecha' AND '$fechaActual') GROUP BY cs.fecha, salas.nombre ORDER BY cs.fecha DESC";
+	//$sql_resumen = "SELECT DISTINCT(salas.nombre), cs.fecha FROM concepto_sala AS cs INNER JOIN salas ON cs.cc = salas.cc WHERE (DATE(cs.fecha) BETWEEN '$fecha' AND '$fechaActual') ORDER BY cs.fecha DESC";
+	//echo $sql_resumen."<br>";
+	$query_resumen=$link_personal->query($sql_resumen);
+	$resumen=$query_resumen->fetch_object();
 
 ?>
 
@@ -39,35 +48,6 @@
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-		<script>
-			function infimpreso(sala)
-	        {
-					var parametros = {
-					"sala": sala,
-					};
-	                $.ajax({
-	                data: parametros,
-	                url: 'informe_cliente_interno_impresion.PHP',
-	                type: 'post',
-	                   beforeSend: function ()
-	                    {
-	                        $("#respuesta").html("Validando, espere por favor...");
-	                    },
-
-	                    success: function (response)
-	                    {
-	                        $("#respuesta").html(response);
-							 {
-							//document.getElementById('consultar').hidden=true;
-							//document.getElementById('sala').hidden=true;
-								//document.getElementById('consultar').disabled=true;
-							 // document.getElementById('sala').disabled=true;
-	                        $("#validador").html(response);
-	                    }
-	                    }
-	        });
-	        }
-	  </script>
   </head>
 	<body>
 		<div align="center">
@@ -93,7 +73,7 @@
 	  	</form>
 		</div>
 		<br>
-			<div class="container col-md-4 col-md-offset-4">
+			<div class="container col-md-6 col-md-offset-3">
 			  <div class="panel-group" id="accordion">
 			    <div class="panel panel-primary">
 			      <div class="panel-heading">
@@ -108,19 +88,14 @@
 										<tr class="bg-info">
 											<th>Nombre</th>
 											<th>Fecha</th>
+											<th># Conceptos evaluados</th>
+											<th>Promedio calificaciones</th>
 										</tr>
 									</thead>
 									<tbody>
 									<?php
-										//consulta de concepto de sala
-										$sql_resumen = "SELECT DISTINCT(salas.nombre), cs.fecha FROM concepto_sala AS cs INNER JOIN salas ON cs.cc = salas.cc
-										WHERE (DATE(cs.fecha) BETWEEN '$fecha' AND '$fechaActual') ORDER BY cs.fecha DESC";
-										//echo $sql_resumen."<br>";
-										$query_resumen=$link_personal->query($sql_resumen);
-										$resumen=$query_resumen->fetch_object();  ///consultar
-
 										if (empty($resumen)) {
-											echo 'No existen registros';
+											echo 'No se encuentran nuevos registros entre <b>'.$fecha.' y '.$fechaActual.'</b>';
 										}
 										else
 										{
@@ -129,6 +104,8 @@
 														<tr>
 															<td><?php echo utf8_encode($resumen->nombre); ?></td>
 															<td><?php echo ($resumen->fecha); ?></td>
+															<td><?php echo ($resumen->conceptos_evaluados)."/23"; ?></td>
+															<td><?php echo number_format((($resumen->suma_calf)/115)*5, 2, '.', ''); ?></td>
 														</tr>
 									<?php
 											}while($resumen=$query_resumen->fetch_object());

@@ -63,7 +63,7 @@ $sql2="SELECT sa.nombre nombre, `fecha`, avg(`calificacion`)  promedio  , `autor
 			//$mail->SMTPSecure="tls"; //Estableix el prefix del servidor.
 			$mail->Port = 25 ; //Estableix el port SMTP.
 			$mail->Username="ares@ceramigres.com"; //Username de la conte de correo que s'utilitza com a servei d'enviament.
-			$mail->Password="T3mp0r4l123"; //contrasenya del compte.
+			$mail->Password="M41l3rD43m0n+"; //contrasenya del compte.
 		 
 		 
 			//Parametros del Remitente

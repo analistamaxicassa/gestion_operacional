@@ -1,22 +1,39 @@
 #p01 {
   font-family: 'Merriweather', serif;
-  font-size: 20px;
+  font-size: 21px;
+  color: #002F87;
+  letter-spacing: 2px;
   text-shadow: -1px 0 white, 0 1px white,
       1px 0 white, 0 -1px white;
-  border-color: #002F87;
-  color: #002F87;
+  -webkit-animation-name: logo-maxicassa; /* Safari 4.0 - 8.0 */
+  -webkit-animation-duration: 4s; /* Safari 4.0 - 8.0 */
+  -webkit-animation-iteration-count: infinite; /* Safari 4.0 - 8.0 */
+  animation-name: logo-maxicassa;
+  animation-duration: 4s;
+  animation-iteration-count: infinite;
 }
-#p01:hover,
-#p01:focus {
-  text-shadow: -1px 0 #002F87, 0 1px #002F87,
-      1px 0 #002F87, 0 -1px #002F87;
-  color: #F6BC1C;
-}
+
 #a02 {
-  color: #f1f1f1;
+  color: #002F87;
   text-decoration: none;
 }
 #a02:hover,
 #a02:focus {
-  color: #F6BC1C;
+  color: white;
+}
+
+@-webkit-keyframes logo-maxicassa {
+  0%   {color:#002F87;}
+  25%  {color:#4f8244;}
+  50%  {color:#002F87;}
+  75%  {color:#a25959;}
+  100% {color:#002F87;}
+}
+/* Standard syntax */
+@keyframes logo-maxicassa {
+  0%   {color:#002F87;}
+  25%  {color:#4f8244;}
+  50%  {color:#002F87;}
+  75%  {color:#a25959;}
+  100% {color:#002F87;}
 }
