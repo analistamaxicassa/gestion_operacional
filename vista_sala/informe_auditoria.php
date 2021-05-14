@@ -41,15 +41,12 @@
 	}
 
   //CONSULTA DETALLE DE LAS GESTIONES POR CENTRO DE COSTO Y FECHA
-
   $sql_seguimientos="SELECT gs.codigo_gestion, gs.centro_costo,gs.fecha,gs.cod_variable,pa.Descripcion as nom_variable ,
                       gs.cod_concepto,vc.descripcion_con as nom_concepto,
-                      gs.cod_tema, ct.descripcion_tema as nom_tema,gs.calificacion,gs.hallazgo,gs.acciones,gs.fecha_control,
+                      gs.calificacion,gs.hallazgo,gs.acciones,gs.fecha_control,
                       gs.estado_gestion,para.Descripcion as nom_estado,gs.cod_sol_hermes,gs.observacion
                       FROM gestion_salas gs INNER JOIN parametros pa ON gs.cod_variable= pa.id_parametro
                       INNER JOIN variables_conceptos vc ON GS.cod_concepto=vc.cod_concepto
-                      INNER JOIN conceptos_temas ct ON gs.cod_tema = ct.cod_tema
-                      INNER JOIN caronte_bd.solicitud sol ON gs.cod_sol_hermes=sol.solicitud_id
                       INNER JOIN parametros para ON gs.estado_gestion = para.id_parametro
                       WHERE gs.centro_costo='$location' and gs.fecha='$fecha'";
                       // exit($sql_seguimientos);
@@ -82,10 +79,10 @@
         <li class="breadcrumb-item">Informe Gestión operacional</li>
       </ol>
     </nav>
-    <div class="container">
+    <div class="container-fluid">
       <div class="row">
         <div class="col-md-6 offset-md-1">
-          <label><strong>Gestión operacional: <?php echo $nombre_sala; ?></strong></label>
+          <label><strong>Informe de Gestión Operacional: <?php echo $nombre_sala; ?></strong></label>
         </div>
       </div>
       <br><br>
@@ -93,19 +90,19 @@
         <div class="col-md-11 offset-md-1">
           <div class="table-responsive">
             <table class="table table-bordered table-hover">
-             <thead>
+             <thead class="text-center bg-info text-white">
              <tr class="bg-info">
+              <th>Código</th>
               <th>Fecha</th>
               <th>variable</th>
               <th>Concepto</th>
-              <th>Tema</th>
               <th>calificacion</th>
               <th>Fecha Control</th>
               <th>Cod. Hermes</th>
               <th>Estado</th>
               <th>Detalles</th>
               <th>Det. Hermes</th>
-              <!-- <th>Seguimientos</th> -->
+              <th>Seguimientos</th>
             </tr>
             </thead>
           <tbody>
@@ -118,8 +115,19 @@
               $fecha  = $resul->fecha;
               $variable  = $resul->nom_variable;
               $concepto  = $resul->nom_concepto;
-              $tema  = $resul->nom_tema;
               $calificacion  = $resul->calificacion;
+
+              $calificacion  = $resul->calificacion;
+              if ($calificacion >= 9) {
+                $color_fila = 'table-success';
+              }elseif ($calificacion >= 7 and $calificacion <= 8) {
+                $color_fila = 'table-warning';
+              }elseif($calificacion >= 0 and $calificacion <= 6) {
+                $color_fila = 'table-danger';
+              }else {
+                $color_fila = 'table-success';
+              }
+
               $hallazgo = $resul->hallazgo;
               $acciones = $resul->acciones;
               $fecha_control = $resul->fecha_control;
@@ -164,20 +172,22 @@
 
 
               ?>
-             <tr>
+             <tr class="<?php echo $color_fila; ?>">
+               <td><?php echo $codigo_gestion; ?></td>
                <td><?php echo $fecha;?></td>
                <td><?php echo $variable;?></td>
                <td><?php echo $concepto;?></td>
-               <td><?php echo $tema;?></td>
                <td><?php echo $calificacion;?></td>
                <td><?php echo $fecha_control;?></td>
                <td><?php echo $cod_sol_hermes;?></td>
                <td><?php echo $estado;?></td>
                <td><button class="btn btn-info btn-lg" class="form-control" data-toggle='modal' data-target='#modal_detalle_<?php echo $contador; ?>' id="ver_detalle"><i class="fas fa-eye"></i></button></td>
-               <?php if ($detalles_solicitud): ?>
+               <?php if ($detalles_solicitud){ ?>
                <td><button class="btn btn-success btn-lg" class="form-control" data-toggle='modal' data-target='#detalle_hermes_<?php echo $contador; ?>' id="ver_detalle_sol"><i class="far fa-eye"></i></button></td>
-             <?php endif; ?>
-               <!-- <td><button class="btn btn-primary btn-lg" class="form-control" data-toggle='modal' data-target='#seguimientos_<?php echo $contador; ?>' id="ver_seguimientos"><i class="fas fa-plus"></i></button></td> -->
+             <?php }else{ ?>
+               <td></td>
+             <?php } ?>
+               <td><button class="btn btn-primary btn-lg" class="form-control" data-toggle='modal' data-target='#seguimientos_<?php echo $contador; ?>' id="ver_seguimientos"><i class="fas fa-plus"></i></button></td>
              </tr>
            </tbody>
            <div class="modal fade bd-example-modal-lg" id="modal_detalle_<?php echo $contador; ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="width:100%" >
@@ -207,10 +217,27 @@
                        </div>
                      </div>
                      <br>
+                     <?php
+                     $sql_temas = "SELECT tg.codigo_gestion,tg.codigo_tema,ct.descripcion_tema
+                                   FROM temas_gestion tg INNER JOIN conceptos_temas ct
+                                   ON tg.codigo_tema = ct.cod_tema and codigo_gestion=$codigo_gestion";
+                     $query_temas = $link_personal->query($sql_temas);
+                     $resul_temas = $query_temas->fetch_object();
+                     ?>
                      <div class="row">
                        <div class="col-md-8">
-                         <label><strong>Tema a revisar:</strong></label>
-                           <input type="text" class= "form-control" name="tema_<?php echo $contador; ?>" value="<?php echo $tema; ?>" readonly>
+                         <label><strong>Tema(s)  Seleccionado(s):</strong></label>
+                           <!-- <input type="text" class= "form-control" name="tema_<?php //echo $contador; ?>" value="<?php echo $tema; ?>" readonly> -->
+                           <?php
+                           if (!empty($resul_temas)) {
+                             do {
+                               $nombretema= $resul_temas->descripcion_tema;
+
+                               echo '<input type="text" class= "form-control" name="tema_'.$contador.'" value="'.$nombretema.'" readonly>';
+
+                             } while (  $resul_temas = $query_temas->fetch_object());
+                           }
+                           ?>
                        </div>
                        <div class="col-md-4">
                          <label for="calificacion"><strong>Calificación:</strong></label>
@@ -319,6 +346,107 @@
                  </div>
                  <div class="modal-footer">
                    <button type="button" class="btn btn-secundary" onclick="cerrar_det_sol(<?php echo $contador; ?>)">Cerrar</button>
+                 </div>
+               </div>
+             </div>
+           </div>
+
+
+           <!-- MODAL PARA VER Y AGREGAR SEGUIMIENTOS A LAS GESTIONES    -->
+           <input type="hidden" id="codigo_gestion_<?php echo $contador; ?>" name="codigo_gestion_<?php echo $contador; ?>" value="<?php echo $codigo_gestion; ?>" >
+           <div class="modal fade bd-example-modal-lg" id="seguimientos_<?php echo $contador; ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="width:100%" >
+             <div class="modal-dialog modal-lg" role="document" style="width:100%">
+               <div class="modal-content">
+                 <div class="modal-header">
+                   <h4 class="modal-title" id="myModalLabel">Seguimientos a Gestión sala</h4>
+                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                     <span aria-hidden="true">&times;</span>
+                   </button>
+                 </div>
+                 <div class="modal-body">
+                   <label><strong><h5>Seguimiento de la gestión</h5></strong></label>
+                     <?php
+                     $sql_consulta_segui = "SELECT ss.cod_seguimiento,ss.fecha,ss.estado,par.Descripcion as nom_estado,
+                                           ss.descripcion,emp.emp_nombre from segui_gestion_salas ss
+                                           INNER JOIN parametros par ON SS.estado= par.id_parametro
+                                           INNER JOIN queryx_seven.empleado emp ON ss.usuario_registro=emp.emp_codigo
+                                           where ss.cod_gestion='$codigo_gestion'";
+                     $query_consulta_segui = $link_personal->query($sql_consulta_segui);
+                     $resul_consulta_segui = $query_consulta_segui->fetch_object();
+
+                     if (!empty($resul_consulta_segui)) {
+                       $conta_segui=0;
+                       do {
+                         $conta_segui += 1;
+                         $cod_seguimiento = $resul_consulta_segui->cod_seguimiento;
+                         $fecha_segui = $resul_consulta_segui->fecha;
+                         $estado_segui = $resul_consulta_segui->nom_estado;
+                         $descripcion_segui = $resul_consulta_segui->descripcion;
+                         $nombre_usuario = $resul_consulta_segui->emp_nombre;
+                     ?>
+                   <div class="row">
+                     <div class="col-md-2">
+                       <label for="fecha"><strong>Fecha </strong></label>
+                       <input type="text" class="form-control" name="fecha_segui_<?php echo $conta_segui; ?>" value="<?php echo $fecha_segui; ?>" readonly>
+                     </div>
+                     <div class="col-md-2">
+                       <label for="fecha"><strong>Estado</strong></label>
+                       <input type="text" class="form-control" name="estado_segui_<?php echo $conta_segui; ?>" value="<?php echo $estado_segui; ?>" readonly>
+                     </div>
+                     <div class="col-md-5">
+                       <label for="fecha"><strong>Seguimiento</strong></label>
+                       <textarea type="text" class="form-control" name="seguimiento_<?php echo $conta_segui; ?>" readonly> <?php echo $descripcion_segui; ?></textarea>
+                     </div>
+                     <div class="col-md-3">
+                       <label for="fecha"><strong>Usuario</strong></label>
+                       <textarea type="text" class="form-control" name="seguimiento_<?php echo $conta_segui; ?>" readonly> <?php echo $nombre_usuario; ?></textarea>
+                     </div>
+                   </div>
+                   <br>
+                   <?php
+                         } while ($resul_consulta_segui = $query_consulta_segui->fetch_object());
+                       }else { ?>
+                         <div class="row">
+                           <div class="col-md-6 offset-md-2">
+                             <label>Aún no hay seguimientos </label>
+                           </div>
+                         </div>
+                   <?php    }
+                   ?>
+                   <hr>
+                   <label><strong><h5>Nuevo Seguimiento</h5></strong></label>
+                   <div class="row">
+                     <div class="col-md-3 offset-md-1">
+                       <label><strong></strong></label>
+                       <select class="form-control" id="estado_segui_<?php echo $contador; ?>" name="estado_segui_<?php echo $contador; ?>">
+                         <!-- <option value="">Seleccione</option> -->
+                         <?php
+                         $sql_estados = "SELECT id_parametro, Descripcion FROM parametros
+                                         WHERE Tipo_ID='12' AND Estado=1 ORDER BY id_parametro";
+                         $query_estados = $link_personal->query($sql_estados);
+                         $resul_estados = $query_estados->fetch_object();
+                         do {
+                           $cod_estado = $resul_estados->id_parametro;
+                           $nom_estado = $resul_estados->Descripcion;
+
+                         if ($estado_segui == $cod_estado) {
+                             echo '<option value='.$cod_estado.' selected>'.$nom_estado.'</option>';
+                         }else {
+                           echo '<option value='.$cod_estado.'>'.$nom_estado.'</option>';
+                         }
+
+                         } while ($resul_estados = $query_estados->fetch_object());
+                         ?>
+                       </select>
+                     </div>
+                     <div class="col-md-8">
+                       <textarea class="form-control" id="nuevo_seguimiento_<?php echo $contador; ?>" name="nuevo_seguimiento_<?php echo $contador; ?>" rows="4" cols="60" placeholder="Describa el seguimiento"></textarea>
+                     </div>
+                   </div>
+                 </div>
+                 <div class="modal-footer">
+                   <button type="button" class="btn btn-primary" onclick="guardar_seguimiento(<?php echo $contador; ?>)">Guardar Seguimiento</button>
+                   <button type="button" class="btn btn-secundary" onclick="cerrar_mod_segui(<?php echo $contador; ?>)">Cerrar</button>
                  </div>
                </div>
              </div>

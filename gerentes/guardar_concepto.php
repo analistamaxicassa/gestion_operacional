@@ -8,15 +8,17 @@
 	$link = Conectarse_personal();
 	$link_caronte=Conectarse_caronte();
 	$mensaje = "";
+	$valida = "";
 
-	if (isset($_POST['sala'],$_POST['cod_tema'])) {
+	if (isset($_POST['sala'],$_POST['cod_concepto'])) {
 
+			$fecha_visita = $_POST['fecha_visita'];
 			$sala = $_POST['sala'];
 			$cod_sociedad = $_SESSION['cod_sociedad'];
 
 			$cod_variable = $_POST['cod_variable'];
 			$cod_concepto = $_POST['cod_concepto'];
-			$cod_tema = $_POST['cod_tema'];
+			// $cod_tema = $_POST['cod_tema'];
 			$calificacion = $_POST['calificacion'];
 
 
@@ -51,30 +53,219 @@
 			//busqueda de solicitud hermes para asociar
 			$sql_hermes = "SELECT max(solicitud_id) as cod_solicitud FROM solicitud  WHERE cod_origen=2 and solicitante='$autor' and DATE(fecha_inicial)='$fechaActual'";
 			$query = $link_caronte->query($sql_hermes);
+			if ($query ==  false) {
+				$cod_sol_hermes = 0;
+			}
 			$resul = $query->fetch_object();
-			$cod_sol_hermes = $resul->cod_solicitud;
+			if (empty($resul)) {
+				$cod_sol_hermes = 0;
+			}else {
+				$cod_sol_hermes = $resul->cod_solicitud;
+			}
 
-			// $sql="INSERT INTO personal.concepto_sala (cc, fecha, concepto_esp, calificacion, hallazgo, tarea, responsable, fecha_control,observacion_conf,autor, estado)
-			// 		VALUES ('$sala', '$f_visita', '$concepto_det', '$calificacion', '$hallazgo', '$tarea', '$responsable', '$fcontrol','$observacion_conf', '$autor', 'PENDIENTE');";
-			$sql = "INSERT INTO gestion_salas(sociedad_ID, centro_costo, fecha, hora, cod_variable, cod_concepto, cod_tema, calificacion, hallazgo, acciones,
-				 			cod_sol_hermes,fecha_control, estado_gestion, observacion, usuario_radica) VALUES ('$cod_sociedad','$sala',CURDATE(),CURTIME(),'$cod_variable','$cod_concepto','$cod_tema',
+			if (empty($cod_sol_hermes)) {
+
+				if (isset($_POST['cod_hermes']) && $_POST['cod_hermes']) {
+					$cod_sol_hermes = $_POST['cod_hermes'];
+				}else {
+					$cod_sol_hermes = 0;
+				}
+			}
+
+			$sql = "INSERT INTO gestion_salas(sociedad_ID, centro_costo, fecha, hora, fecha_inspeccion, cod_variable, cod_concepto,  calificacion, hallazgo, acciones,
+				 			cod_sol_hermes,fecha_control, estado_gestion, observacion, usuario_radica) VALUES ('$cod_sociedad','$sala',CURDATE(),CURTIME(), '$fecha_visita', '$cod_variable','$cod_concepto',
 							'$calificacion','$hallazgo','$acciones','$cod_sol_hermes','$fecha_control',97,'$observacion','$autor')";
 			// $mensaje .=  $sql;
 			// exit($mensaje);
 			$qry_sql = $link->query($sql);
 
 			if ($qry_sql == true) {
-				$mensaje .= "Se ha creado la gestión con éxito";
-				echo $mensaje;
+				$mensaje .= "Se ha creado la gestión con éxito.<br\> ";
 			}else {
-				$mensaje .= "No se pudo crear su solicitud, se presentaron errores al crear el registro, intenter de nuevo en un momento.";
-				echo $mensaje;
+				$mensaje .= "No se pudo crear su solicitud, se presentaron errores al crear el registro, intenter de nuevo en un momento.<br\>";
+				// echo $mensaje;
 			}
+
+			//busqueda de código de gestión para asociar
+			$sql_gestion = "SELECT max(codigo_gestion) AS cod_gestion FROM gestion_salas";
+			$query_gestion = $link->query($sql_gestion);
+			if ($query_gestion ==  false) {
+				$cod_gestion = 0;
+			}
+			$resul_gestion = $query_gestion->fetch_object();
+			if (empty($resul_gestion)) {
+				$cod_gestion = 0;
+			}else {
+				$cod_gestion = $resul_gestion->cod_gestion;
+			}
+
+			if (isset($_POST['temas']) && !empty($_POST['temas'])) {
+				  	$arreglo = array();
+						$arreglo = json_decode($_POST['temas']);
+
+						if (isset($_POST['auditoria']) && !empty($_POST['auditoria'])) {
+							$val_auditoria = $_POST['auditoria'];
+						}else {
+							$val_auditoria= 0;
+						}
+
+						// var_dump($arreglo)."<br>";
+						// echo count($arreglo);
+						// exit();
+
+						$cadena = '';
+						  for ($i=0 ; $i< count($arreglo) ; $i++) {
+								// echo $arreglo[$i]."<br>";
+
+							if ($arreglo[$i] <> 0 OR !empty($arreglo[$i]))  {
+
+								$cadena .= "( $cod_gestion, $arreglo[$i],$val_auditoria),";
+							}
+						}
+						$sql_insert = "INSERT INTO temas_gestion(codigo_gestion, codigo_tema,valor)
+													VALUES ".trim($cadena,',');
+						// exit($sql_insert);
+
+						$query_insert = $link->query($sql_insert);
+						if ($qry_sql == true) {
+
+							$mensaje .= "Se han asociado los temas a la gestión con éxito";
+						}else {
+
+							$mensaje .= "No se logro asociar los temas a la gestión, se presentaron errores al crear el registro.";
+							// echo $mensaje;
+						}
+			}
+
+			//CARGUE DE DOCUMENTOS
+				 if (!empty($_FILES['file_adjunto']["name"])) {
+
+							 $adjunto = $_FILES['file_adjunto'];
+							 $contadoradjunto = 1;
+							 $valida .= validar_archivo($adjunto, $sala, $cod_gestion, $link,$contadoradjunto);
+							 // echo $valida;
+
+					 }
+
+					 if (!empty($_FILES['file_adjunto_1']["name"])) {
+
+								 $adjunto1 = $_FILES['file_adjunto_1'];
+								 $contadoradjunto += 1;
+								 $valida .= validar_archivo($adjunto1, $sala, $cod_gestion, $link,$contadoradjunto);
+								 // echo $valida;
+						 }
+						 if (!empty($_FILES['file_adjunto_2']["name"])) {
+
+									 $adjunto1 = $_FILES['file_adjunto_2'];
+									 $contadoradjunto += 1;
+									 $valida .= validar_archivo($adjunto1, $sala, $cod_gestion, $link,$contadoradjunto);
+									 // echo $valida;
+							 }
+
+			echo $mensaje;
+			echo $valida;
+
+}elseif (isset($_POST['codigo_gestion'],$_POST['cod_hermes']) && !empty($_POST['codigo_gestion']) && !empty($_POST['cod_hermes'])) {
+
+	$codigo_gestion = $_POST['codigo_gestion'];
+	$codigo_hermes = $_POST['cod_hermes'];
+
+	$sql_update = "UPDATE  gestion_salas SET cod_sol_hermes=$codigo_hermes WHERE codigo_gestion=$codigo_gestion";
+	// exit($sql_update);
+	$query_update = $link->query($sql_update);
+	if ($query_update == true) {
+		$mensaje .= "Se guardo el código de solicitud de hermes a la gestión";
+	}else {
+		$mensaje .= "Se pressentaron errores al intentar actualizar la solicitud de hermes a la gestión";
+	}
+
+echo $mensaje;
 
 }else {
 	$mensaje .= "No hay suficientes datos para crear un registro";
 	echo $mensaje;
+	echo $valida;
 }
+
+
+
+function validar_archivo($adjunto, $centro_costo, $ultimo_registro, $link,$contadorad){
+		$contador = $contadorad;
+
+	 if (empty($adjunto["name"])) {
+		 // $respuesta = var_dump($adjunto["file_adjunto"]["name"]);
+		$tipo_error = "0";
+		$archivo_adjunto = "";
+		$uploadOk = false;
+		$no_existe_adjunto = true;
+
+	} else {
+		$uploadOk = true;
+		$tipo_error = "0";
+		$no_existe_adjunto = false;
+		$target_dir = "../adjuntos/";
+		$target_dir1 = "../adjuntos/";
+		// $target_dir = "\\\\10.1.0.131\Reclamos_PDV\\";
+		// $target_dir1 =  "\\\\\\\\10.1.0.131\\\Reclamos_PDV\\\\";
+		$baseName = $adjunto["name"];
+		list($fileName, $fileType) = explode(".", $baseName);
+
+
+		if ($adjunto["size"] > 25000000) {
+			$tipo_error = "4";
+			$uploadOk = false;
+		}
+
+		if($fileType != "jpg" && $fileType != "png" && $fileType != "jpeg" && $fileType != "pdf" && $fileType != "mp4" && $fileType != "wmv" && $fileType != "avi" && $fileType != "xlsx" && $fileType != "xls") {
+			$tipo_error = "5";
+			$uploadOk = false;
+			}
+		}
+		// return array($uploadOk,$tipo_error,$fileType,$target_dir,$no_existe_adjunto);
+		if ($tipo_error != 0 ) {
+
+					if ($tipo_error == '4') {
+						$respuesta = '<i class="fas fa-info-circle fa-lg"></i>Su solicitud se generó correctamente, aunque el archivo adjunto no se cargo por que supera los 200 Megabyte.';
+					} elseif ($tipo_error == '5') {
+						$respuesta = '<i class="fas fa-info-circle fa-lg"></i>Su solicitud se generó correctamente, aunque el archivo que intenta archivo adjuntar no es de un tipo valido. (Tipos validos: JPG, JPEG, PNG, PDF, AVI, MP4, WMV Y MKV)';
+					}
+			}elseif ($uploadOk) {
+						// $contador += 1;
+						$fecha_file = new DateTime("now");
+						$fecha_file = $fecha_file->format('Ymd');
+						$nuevo_nombre_archivo =  $centro_costo. "_".$fecha_file."_".$ultimo_registro."_".$contador.".".$fileType;
+						$target_file = $target_dir.$nuevo_nombre_archivo;
+
+						while (file_exists($target_file)) {
+							$contador += 1;
+							$nuevo_nombre_archivo =  $centro_costo. "_".$fecha_file."_".$ultimo_registro."_".$contador.".".$fileType;
+							$target_file = $target_dir.$nuevo_nombre_archivo;
+						}
+
+						if (move_uploaded_file($adjunto["tmp_name"], $target_file)) {
+							$archivo_adjunto = $nuevo_nombre_archivo;
+						} else {
+							$archivo_adjunto = "";
+							$uploadOk = false;
+							// $tipo_error = "6";
+							$respuesta = '<i class="fas fa-info-circle fa-lg"></i> Su solicitud se generó correctamente, aunque se encontró un error al intentar procesar el archivo adjunto y no se cargó a la solicitud.';
+						}
+
+						$sql_adjuntos = "INSERT INTO adjuntos_informe_salas(informe_id, nombre_adjunto, ruta_adjunto)
+														VALUES ('$ultimo_registro','$archivo_adjunto','$target_dir1')";
+						// $respuesta = "<b>".$sql_adjuntos;
+						$query_adjntos = $link->query($sql_adjuntos);
+						if ($query_adjntos == false) {
+							$respuesta =  "<br>Se perdió la conexión con la base de datos";
+						}else {
+							$respuesta = "<br>El archivo adjunto N°.".$contador." fue cargado satisfactoriamente.";
+						}
+
+				}elseif ($no_existe_adjunto == true) {
+						$respuesta = ' <br> Felicitaciones!,su solicitud fue generada correctamente.sin archivo adjunto'.$contador.'';
+				}
+				return $respuesta;
+	 }
 
 	// $sql_concepto="SELECT Descripcion from parametros where id_parametro='$concepto_det' and Tipo_ID=1";
 	// $query_concepto=$link->query($sql_concepto);

@@ -17,8 +17,8 @@
 	{
 		$ccUser = $_POST['usuario'];
 		$claveUsuario = $_POST['claveUsuario'];
-		$LocationError = "Location: gerentes/index.php?mensaje=";
-		$Location = "Location: gerentes/menu_bar.php";
+		$LocationError = "Location: analistas/index.php?mensaje=";
+		$Location = "Location: analistas/menu_bar.php";
 		$validarGerente = true;
 		$validar_admin = false;
 	}
@@ -134,7 +134,11 @@
 					//echo "Se guardo el log de la sesión";
 					$nuevoIngreso->insertar($_SESSION['ingreso_ID'], $_SESSION['userID'], $origen);
 				}
-				header($Location);
+				if ($_SESSION['cod_cargo'] == 107 || $_SESSION['cod_cargo'] == 151 || $_SESSION['cod_cargo'] == 152 || $_SESSION['cod_cargo'] == 242)  {
+						header("Location: gerentes/menu_bar.php");
+				}else {
+					header($Location);
+				}
 
 		}elseif($validar_admin) {
 

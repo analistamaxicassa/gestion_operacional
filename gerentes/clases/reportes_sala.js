@@ -1,19 +1,115 @@
 'use strict'
-function cerrar(){
-  $("#modal").modal('hide');
+function cerrar(contador){
+    location.reload();
+  $("#modal_general_"+contador).modal('hide');
   $('body').removeClass('modal-open');
 }
-function cerrar2(contador){
-  $("#modal_detalle_"+contador).modal('hide');
+function cerrar2(contador_det,contador){
+  $("#modal_detalle_"+contador_det+"_"+contador).modal('hide');
   $('body').removeClass('modal-open');
 }
 
-function cerrar_det_sol(conta){
-  $("#detalle_hermes_"+conta).modal('hide');
+function cerrar_det_sol(contador_det,conta){
+  $("#detalle_hermes_"+contador_det+"_"+conta).modal('hide');
+  $('body').removeClass('modal-open');
 }
 
-function cerrar_mod_segui(conta){
-  $("#seguimientos_"+conta).modal('hide');
+function cerrar_mod_segui(contador_det,conta){
+  $("#seguimientos_"+contador_det+"_"+conta).modal('hide');
+  $('body').removeClass('modal-open');
+}
+
+
+function guardar_hermes(contador_ges){
+
+      let codigo_gestion = $("#codigo_gestion_"+contador_ges).val();
+      if ($("#cod_hermes_"+contador_ges).val() == '' ) {
+        bootbox.alert({
+          message: "Por favor ingrese Código solicitud Hermes",
+          title: 'Validación!',
+          centerVertical: true
+        });
+        $("#cod_hermes_"+contador_ges).focus();
+        return false;
+
+      }
+      let cod_hermes = $("#cod_hermes_"+contador_ges).val();
+
+      $.ajax({
+        url:'guardar_concepto.php',
+        type:'POST',
+        data:{
+          codigo_gestion : codigo_gestion,
+          cod_hermes: cod_hermes,
+        },
+        beforeSend: function(){
+           $("#resultados_gestiones").html("Validando, espere por favor...");
+           $('#resultados_gestiones').show();
+        },
+        success: function(response){
+            bootbox.confirm({
+            message: response,
+            title: 'Respuesta!',
+            centerVertical: true,
+            callback: function (result) {
+              cerrar2(contador_ges);
+              location.reload();
+            }
+
+          });
+
+        }
+      });
+
+}
+
+function ver_gestiones(contador,contador2){
+  document.getElementById("resultados_gestiones_"+contador+"_"+contador2).style.display = "block";
+  document.getElementById("ocultar_"+contador+"_"+contador2).style.display = "block";
+  document.getElementById("buscar_"+contador+"_"+contador2).style.display = "none";
+}
+function ocultar_gestiones(contador,contador2){
+  document.getElementById("resultados_gestiones_"+contador+"_"+contador2).style.display = "none";
+  document.getElementById("buscar_"+contador+"_"+contador2).style.display = "block";
+  document.getElementById("ocultar_"+contador+"_"+contador2).style.display = "none";
+}
+
+function buscar_gestiones(contador,contador2){
+
+    if ($("#det_fecha_"+contador+"_"+contador2).val()=="") {
+      bootbox.alert({
+        message: "Por favor seleccione fecha inicial",
+        title: 'Validación!',
+        centerVertical: true
+      });
+      $("#det_fecha_"+contador+"_"+contador2).focus();
+      return false;
+    }
+    let centro_costo = $("#det_centro_costo_"+contador+"_"+contador2).val();
+    let fecha = $("#det_fecha_"+contador+"_"+contador2).val();
+    let variable = $("#det_cod_variable_"+contador+"_"+contador2).val();
+      let contador1 = contador2;
+
+    $.ajax({
+      url:'clases/ajax_gestiones.php',
+      type:'POST',
+      data:{
+        centro_costo : centro_costo,
+        fecha: fecha,
+        variable: variable,
+        contador1: contador1
+      },
+      beforeSend: function(){
+         $("#resultados_gestiones_"+contador+"_"+contador2).html("Validando, espere por favor...");
+         $('#resultados_gestiones_'+contador+"_"+contador2).show();
+      },
+      success: function(response){
+        $("#resultados_gestiones_"+contador+"_"+contador2).show();
+        $("#resultados_gestiones_"+contador+"_"+contador2).html(response);
+
+      }
+    });
+
 }
 
 function guardar_seguimiento(contador){
@@ -66,4 +162,47 @@ function guardar_seguimiento(contador){
       });
       }
   });
+}
+
+function guardar_hermes(contador_ges){
+
+      let codigo_gestion = $("#codigo_gestion_"+contador_ges).val();
+      if ($("#cod_hermes_"+contador_ges).val() == '' ) {
+        bootbox.alert({
+          message: "Por favor ingrese Código solicitud Hermes",
+          title: 'Validación!',
+          centerVertical: true
+        });
+        $("#cod_hermes_"+contador_ges).focus();
+        return false;
+
+      }
+      let cod_hermes = $("#cod_hermes_"+contador_ges).val();
+
+      $.ajax({
+        url:'guardar_concepto.php',
+        type:'POST',
+        data:{
+          codigo_gestion : codigo_gestion,
+          cod_hermes: cod_hermes,
+        },
+        beforeSend: function(){
+           $("#resultados_gestiones").html("Validando, espere por favor...");
+           $('#resultados_gestiones').show();
+        },
+        success: function(response){
+            bootbox.confirm({
+            message: response,
+            title: 'Respuesta!',
+            centerVertical: true,
+            callback: function (result) {
+              cerrar2(contador_ges);
+              location.reload();
+            }
+
+          });
+
+        }
+      });
+
 }

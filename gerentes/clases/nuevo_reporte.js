@@ -38,6 +38,8 @@
       });
     }
 
+
+
     function busca_calificacion(){
 
       // var str = $("#sala_queryx").val();
@@ -208,6 +210,117 @@
 
      }
 
+
+     function fileValidacion(){
+       var fileInput = document.getElementById('file_adjunto');
+       if (!fileInput) {
+         alert('No has seleccionado ningún archivo');
+         return false;
+       }else{
+       var fileSize = $('#file_adjunto')[0].files[0].size;
+
+       //VALIDACIÓN NOMBRE DEL archivo
+       var nombre = $('#file_adjunto')[0].files[0].name;
+       if (nombre.length>30) {
+         alert('El nombre del adjunto supera máximo permitido (Máximo 30 caracteres)');
+         $('#file_adjunto').val('');
+         return false;
+       }
+       //TERMINA VALIACION
+
+       // alert(fileSize);
+       var siezekiloByte = parseInt(fileSize / 1024);
+       // alert(siezekiloByte);
+       if (siezekiloByte >= 21000) {
+             alert('El tamaño del adjunto supera el límite permitido (20 MB)');
+             $('#file_adjunto').val('');
+             return false;
+       }
+       var filePath = fileInput.value;
+       var allowedExtensions = /(.jpg|.png|.jpeg|.xlsx|.xls|.pdf)$/i;
+       if (!allowedExtensions.exec(filePath)) {
+         alert('Comprueba la extensión de los archivos a subir.\n sólo se pueden subir archivos con extensiones .jpg/.png/.jpeg/.xlsx /.xls /.pdf');
+         fileInput. value ='';
+         return false;
+         }
+       }
+     }
+
+
+     function fileValidacion1(){
+       var fileInput = document.getElementById('file_adjunto_1');
+       if (!fileInput) {
+         alert('No has seleccionado ningún archivo');
+         return false;
+       }else{
+
+       var fileSize = $('#file_adjunto_1')[0].files[0].size;
+       // alert(fileSize);
+
+       //VALIDACIÓN NOMBRE DEL archivo
+       var nombre = $('#file_adjunto_1')[0].files[0].name;
+       if (nombre.length>30) {
+         alert('El nombre del adjunto supera máximo permitido (Máximo 30 caracteres)');
+         $('#file_adjunto_1').val('');
+         return false;
+       }
+       //TERMINA VALIDACION
+
+       var siezekiloByte = parseInt(fileSize / 1024);
+       // alert(siezekiloByte);
+       if (siezekiloByte >= 21000) {
+             alert('El tamaño del adjunto supera el límite permitido (20 MB)');
+             $('#file_adjunto_1').val('');
+             return false;
+       }
+
+       var filePath = fileInput.value;
+       var allowedExtensions = /(.jpg|.png|.jpeg|.xlsx|.xls|.pdf)$/i;
+       if (!allowedExtensions.exec(filePath)) {
+         alert('Comprueba la extensión de los archivos a subir.\n sólo se pueden subir archivos con extensiones .jpg/.png/.jpeg/.xlsx/.xls/.pdf');
+         fileInput. value ='';
+         return false;
+         }
+       }
+     }
+
+     function fileValidacion2(){
+       var fileInput = document.getElementById('file_adjunto_2');
+       if (!fileInput) {
+         alert('No has seleccionado ningún archivo');
+         return false;
+       }else{
+
+       var fileSize = $('#file_adjunto_2')[0].files[0].size;
+       // alert(fileSize);
+
+       //VALIDACIÓN NOMBRE DEL archivo
+       var nombre = $('#file_adjunto_2')[0].files[0].name;
+       if (nombre.length>30) {
+         alert('El nombre del adjunto supera máximo permitido (Máximo 30 caracteres)');
+         $('#file_adjunto_2').val('');
+         return false;
+       }
+       //TERMINA VALIDACION
+
+       var siezekiloByte = parseInt(fileSize / 1024);
+       // alert(siezekiloByte);
+       if (siezekiloByte >= 22000) {
+             alert('El tamaño del adjunto supera el límite permitido (21 MB)');
+             $('#file_adjunto_2').val('');
+             return false;
+       }
+
+       var filePath = fileInput.value;
+       var allowedExtensions = /(.jpg|.png|.jpeg|.xlsx|.xls|.pdf)$/i;
+       if (!allowedExtensions.exec(filePath)) {
+         alert('Comprueba la extensión de los archivos a subir.\n sólo se pueden subir archivos con extensiones .jpg/.png/.jpeg/.xlsx/.xls/.pdf');
+         fileInput. value ='';
+         return false;
+         }
+       }
+     }
+
      function guardar_solicitud(){
 
        if ($("#userID").val() == "") {
@@ -322,7 +435,7 @@
                   title: 'Respuesta!',
                   centerVertical: true,
                   callback: function (result) {
-                    document.getElementById('guardar_gestion').disabled = false;
+                    // document.getElementById('guardar_gestion').disabled = false;
                     // document.getElementById('crear_solicitud').disabled = true;
                     cerrar();
                   }
@@ -334,7 +447,15 @@
      }
 
      function guardar_gestion(){
-       if ($("#sala").val() == "") {
+       if ($("#fecha_visita").val=="") {
+               bootbox.alert({
+                 message: "Por seleccione fecha de inspección",
+                 title: 'Validación!',
+                 centerVertical: true
+               });
+               $("#fecha_visita").focus();
+               return false;
+       }else if ($("#sala").val() == "") {
                bootbox.alert({
                  message: "No se encuentra centro de costo, ingrese de nuevo a la herramienta",
                  title: 'Validación!',
@@ -369,7 +490,7 @@
              $("#cod_tema").focus();
               return false;
 
-      }else if (($("#calificacion_ant").val() == "") && ($("#calificacion").val() == "")) {
+      }else if (($("#calificacion_ant").val() == "") || (($("#calificacion").val() == "") || $("#calificacion").val()==0)) {
 
             if ($("#calificacion_ant").val() == "") {
               bootbox.alert({
@@ -380,9 +501,17 @@
              $("#calificacion_ant").focus();
               return false;
 
-            }else {
+            }else if($("#calificacion").val() == "") {
               bootbox.alert({
-                message: "Por favor ingrese una nueva calificación",
+                message: "Por favor ingrese una calificación",
+                title: 'Validación!',
+                centerVertical: true
+              });
+              $("#calificacion").focus();
+              return false;
+            }else if($("#calificacion").val()==0 ){
+              bootbox.alert({
+                message: "Por favor ingrese una calificación válida",
                 title: 'Validación!',
                 centerVertical: true
               });
@@ -434,18 +563,9 @@
              $("#evaluador").focus();
               return false;
 
-      }else if ($("#fecha_control").val() == "") {
-              bootbox.alert({
-                message: "Por favor ingrese fecha de visita",
-                title: 'Validación!',
-                centerVertical: true
-              });
-             $("#fecha_visita").focus();
-              return false;
-
       }else if ($("#observacion").val() == "") {
               bootbox.alert({
-                message: "Por favor ingrese fecha de visita",
+                message: "Por favor ingrese alguna observación",
                 title: 'Validación!',
                 centerVertical: true
               });
@@ -453,14 +573,53 @@
               return false;
       }else {
 
-
+      var fecha_visita = $("#fecha_visita").val();
       var str = $("#sala").val();
       var array = str.split("-");
       var sala_codigo = array[0];
-      // var sala = $("#sala").val();
       var cod_variable = $("#cod_variable").val();
       var cod_concepto = $("#cod_concepto").val();
-      var cod_tema = $("#cod_tema").val();
+      var contador= $("#contador").val();
+
+      var auditoria = $("#auditoria").val();
+      // alert(contador);
+      // return false;
+      var i = 0;
+      var temas = [];
+      while(i<=contador){
+        // var input_i = $("#cod_tema_"+i).val();
+        var input_i = $("#cod_tema_"+i).prop('checked');
+        if (input_i == true) {
+          temas [i]= $("#cod_tema_"+i).val();
+      }else {
+          temas[i]= 0;
+      }
+        i++;
+      }
+      // alert(array_temas.length);
+      let j=0;
+      let temas_si=0
+      while (j<=temas.length) {
+        if (temas[j] != 0 && temas[j] != undefined) {
+          // alert(temas);
+          temas_si=1;
+        }
+        j++;
+      }
+      if (temas_si == 0){
+      bootbox.alert({
+        message: "Por favor seleccione algún tema",
+        title: 'Validación!',
+        centerVertical: true
+      });
+       $("#tema_revisar").focus();
+        return false;
+      }
+      var array_temas = JSON.stringify(temas);
+
+      // console.log(array_temas);
+      //  return false;
+      var cod_hermes = $("#cod_hermes").val();
       var calificacion_ant = $("#calificacion_ant").val();
       var codigo_sol_califica = $('#codigo_sol_califica').val();
       var calificacion = $("#calificacion").val();
@@ -470,11 +629,19 @@
       var evaluador = $("#evaluador").val();
       var observacion = $("#observacion").val();
 
+
+      var imagen = $('#file_adjunto')[0].files[0];
+      var imagen1 = $('#file_adjunto_1')[0].files[0];
+      var imagen2 = $('#file_adjunto_2')[0].files[0];
+
+
+
       var misdatos = new FormData();
+      misdatos.append("fecha_visita",fecha_visita);
       misdatos.append("sala",sala_codigo);
       misdatos.append("cod_variable",cod_variable);
       misdatos.append("cod_concepto",cod_concepto);
-      misdatos.append("cod_tema",cod_tema);
+      misdatos.append("temas",array_temas);
       misdatos.append("calificacion_ant",calificacion_ant);
       misdatos.append("codigo_sol_califica",codigo_sol_califica);
       misdatos.append("calificacion",calificacion);
@@ -483,6 +650,12 @@
       misdatos.append("fecha_control",fecha_control);
       misdatos.append("evaluador",evaluador);
       misdatos.append("observacion",observacion);
+      misdatos.append("auditoria",auditoria);
+      misdatos.append("cod_hermes",cod_hermes);
+
+      misdatos.append("file_adjunto",imagen);
+      misdatos.append("file_adjunto_1",imagen1);
+      misdatos.append("file_adjunto_2",imagen2);
 
       $.ajax({
         url:"guardar_concepto.php",
@@ -496,7 +669,7 @@
             title: 'Respuesta!',
             centerVertical: true,
             callback: function (result) {
-              // console.log(response);
+              console.log(response);
               location.reload();
             }
           });
@@ -507,6 +680,26 @@
     }
 
  }
+ function num_temas_detalle(contador,cod_tema){
+   console.log("contador vale:"+contador);
+   $("#contador").val(contador);
+   let numero=0;
+   while(numero<=contador){
+
+     if (cod_tema>=193 && cod_tema<=195) {
+       // alert(cod_tema);
+       document.getElementById("divauditoria").style.display = "block";
+       $("#divauditoria").prop('required',true);
+       numero++;
+     }
+   }
+ }
+
+ function num_temas(contador){
+   console.log("contador vale:"+contador);
+   $("#contador").val(contador);
+
+ };
 
 
 
